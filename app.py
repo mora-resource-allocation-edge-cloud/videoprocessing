@@ -2,7 +2,8 @@ from kafka import KafkaConsumer, KafkaProducer
 from subprocess import check_output
 import time
 import logging 
-import os 
+import os
+import sys
 
 initialized = False
 MAIN_TOPIC = os.environ.get('KAFKA_MAIN_TOPIC')
@@ -24,9 +25,14 @@ while not initialized:
         logging.warning("Producer connection error, retrying...")
         time.sleep(3)
 
+I = 10
 while MAIN_TOPIC not in consumer.topics():
     time.sleep(1)
-    logging.warning("Waiting for the topic to be created")
+    logging.warning(f"Waiting for the topic ${MAIN_TOPIC} to be created")
+    if I > 0:
+        I -= 1
+    else:
+        sys.exit(1)
     
 consumer.subscribe(topics=[MAIN_TOPIC])
 
